@@ -1,15 +1,31 @@
 describe('Login', () => {
   it('Deve logar com sucesso', ()=>{
-    cy.viewport(1440, 900)
-    cy.visit('http://localhost:3000')
+    cy.start();
+    cy.submitLoginForm('papito@webdojo.com', 'katana123')
 
-    cy.get('#email').type('papito@webdojo.com')
-    cy.get('#password').type('katana123')
+    cy.get('[data-cy="user-name"]')
+      .should('be.visible')
+      .and('have.text', 'Fernando Papito')
+    cy.get('[data-cy="welcome-message"]')
+      .should('be.visible')
+      .and('have.text', 'Olá QA, esse é o seu Dojo para aprender Automação de Testes.')
+  })
 
-    cy.contains('button', 'Entrar').click()
+  it('Não deve logar com credenciais inválidas', ()=>{
+    cy.start();
+    cy.submitLoginForm('papito@webdojo.com', 'katana1234')
+    cy.contains('Acesso negado! Tente novamente.')
+      .should('be.visible')
+    
+  })
 
-    cy.get('[data-cy="user-name"]').should('be.visible').and('have.text', 'Fernando Papito')
-    cy.get('[data-cy="welcome-message"]').should('be.visible').and('have.text', 'Olá QA, esse é o seu Dojo para aprender Automação de Testes.')
+
+   it('Não deve logar com email não cadastrado', ()=>{
+    cy.start();
+    cy.submitLoginForm('papitodd@webdojo.com', 'katana123')
+    cy.contains('Acesso negado! Tente novamente.')
+      .should('be.visible')
+    
   })
 
 })
